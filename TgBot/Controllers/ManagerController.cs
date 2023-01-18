@@ -1,25 +1,18 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Drawing;
-using System.Reflection.Metadata.Ecma335;
-using Telegram.Bot.Types;
 using Telegram.Bot;
-using Telegram.Bot.Types.ReplyMarkups;
-using static System.Net.WebRequestMethods;
 using TgBot.Models;
-using static System.Net.Mime.MediaTypeNames;
-using System.Drawing.Imaging;
-using Telegram.Bot.Types.InputFiles;
 using TgBot.Controllers.Helpers;
 using Microsoft.IdentityModel.Tokens;
+using Telegram.Bot.Types;
 
 namespace TgBot.Controllers {
     [ApiController]
     [Route("api/[controller]")]
-    public class TgController {
+    public class ManagerController {
 
 
         protected PhoneShopContext Context { get; private set; }
-        public TgController() {
+        public ManagerController() {
             this.Context = new PhoneShopContext();
         }
 
@@ -30,23 +23,26 @@ namespace TgBot.Controllers {
             if (update == null) {
                 return Results.BadRequest();
             }
-            
-          
+
+
 
 
 
             if (update.Type == Telegram.Bot.Types.Enums.UpdateType.CallbackQuery) {
-                if (update.CallbackQuery.Data.Equals("buy")) {
-                    await BotHelper.Manager.SendTextMessageAsync(1094771232, $"@{update.CallbackQuery.From.Username} купил:\n {update.CallbackQuery.Message.Text}");
+                if (update.CallbackQuery.Data.Equals("changeStatus")) {
+                    //await BotHelper.Manager.SendTextMessageAsync(1094771232, $"@{update.CallbackQuery.From.Username} купил:\n {update.CallbackQuery.Message.Text}");
 
-
-                    int id = this.Context.Clients.FirstOrDefault(x => x.TelegramId == update.CallbackQuery.Message.Chat.Id.ToString()).UserId;
-                    this.Context.Orders.Add(new Order {
-                        Status = "ordered",
-                        PhoneId = int.Parse(update.CallbackQuery.Message.Text.Split(".")[0]),
-                        ClientId = id
-                    });
+                    int orderid = int.Parse(update.CallbackQuery.Message.Text.Split(".")[0]);
+                    this.Context.Orders.FirstOrDefault(x => x.Id == orderid).Status = "checked";
                     this.Context.SaveChangesAsync();
+                                                                                                                              //
+                                                                                                                              //update.CallbackQuery.Message.Chat.Id.ToString()).UserId;
+                    //this.Context.Orders.Add(new Order {
+                    //    Status = "ordered",
+                    //    PhoneId = int.Parse(),
+                    //    ClientId = id
+                    //});
+                    //this.Context.SaveChangesAsync();
                 }
             }
 
@@ -55,25 +51,11 @@ namespace TgBot.Controllers {
 
             if (update.Type == Telegram.Bot.Types.Enums.UpdateType.Message) {
 
-                if (!this.Context.Clients.Any(x => x.TelegramId == update.Message.From.Id.ToString())) {
-                    this.Context.Clients.Add(new Client() { TelegramId = update.Message.From.Id.ToString(), Username = update.Message.From.Username });
-                    this.Context.SaveChangesAsync();
-                } else if (!update.Message.From.Username.IsNullOrEmpty()) {
-                    if (this.Context.Clients.FirstOrDefault(y => y.TelegramId == update.Message.From.Id.ToString()).Username != update.Message.From.Username) {
-                        this.Context.Clients.FirstOrDefault(y => y.TelegramId == update.Message.From.Id.ToString()).Username = update.Message.From.Username;
-                        this.Context.SaveChangesAsync();
-                    }
-                }
-
-                if (update.Message.From.Username == null) {
+                if (update.Message.Text.IsNullOrEmpty()) {
                     return Results.BadRequest();
                 }
 
-                if (update.Message.Text == null || update.Message.Text.Equals(String.Empty)) {
-                    return Results.BadRequest();
-                }
-
-                foreach (var command in CommandHelper.ClientCommands) {
+                foreach (var command in CommandHelper.ManagerCommands) {
 
                     bool isDone = false;
                     bool isArgument = command.isArgumentContains();

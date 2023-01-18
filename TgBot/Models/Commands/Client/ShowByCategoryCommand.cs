@@ -2,7 +2,8 @@
 using Telegram.Bot.Types;
 using TgBot.Controllers.Helpers;
 
-namespace TgBot.Models.Commands.Client {
+namespace TgBot.Models.Commands.Client
+{
     public class ShowByCategoryCommand : ShowPhonesCommand {
         public override List<string> getAliases() {
             return new List<string>() { "category", "категория" };

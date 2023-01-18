@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace TgBot.Models;
 
@@ -22,4 +23,8 @@ public partial class Phone
     public virtual ICollection<Order> Orders { get; } = new List<Order>();
 
     public virtual Producer? Producer { get; set; }
+
+    public override string ToString() {
+        return $"{this.Name}\n{this.Price} {this.PriceType}";
+    }
 }

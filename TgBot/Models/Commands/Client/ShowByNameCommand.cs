@@ -3,7 +3,8 @@ using Telegram.Bot;
 using Telegram.Bot.Types;
 using TgBot.Controllers.Helpers;
 
-namespace TgBot.Models.Commands.Client {
+namespace TgBot.Models.Commands.Client
+{
     public class ShowByNameCommand : ShowPhonesCommand {
         public override List<string> getAliases() {
             return new List<string>() { "name", "название" };

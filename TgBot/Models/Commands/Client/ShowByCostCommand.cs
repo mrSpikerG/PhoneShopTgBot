@@ -4,7 +4,8 @@ using TgBot.Controllers;
 using TgBot.Controllers.Helpers;
 using Telegram.Bot;
 
-namespace TgBot.Models.Commands.Client {
+namespace TgBot.Models.Commands.Client
+{
     public class ShowByCostCommand : ShowPhonesCommand {
         public override List<string> getAliases() {
             return new List<string>() { "cost", "цена" };
